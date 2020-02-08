@@ -4,19 +4,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+
+//Aqui começa o programa
 void main() {
   runApp(MaterialApp(
-    home: Home(),
-    debugShowCheckedModeBanner: false,
+    home: Home(), // Chamo o state
+    debugShowCheckedModeBanner: false, // somente para não rodar com a faixa de debug
   ));
 }
-
+// 
 class Home extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _HomeState createState() => _HomeState(); // Cria o primeiro estado
 }
 
 class _HomeState extends State<Home> {
+  //Onde declaro as váriaveis do HomeState
   GlobalKey<FormState> _formKey;
   Map<String, dynamic> _lastRemoved;
   int _lastRemovedPos;
@@ -24,7 +27,7 @@ class _HomeState extends State<Home> {
   List _toDoList;
 
   @override
-  void initState() {
+  void initState() { // Onde vai passar sempre que iniciar o state do app
     _formKey = GlobalKey<FormState>();
     _toDoList = List();
     _readData().then((data) {
@@ -35,6 +38,7 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  //Adiciono em um arquivo
   void _addToDo() {
     setState(() {
       Map<String, dynamic> newToDo = Map();
@@ -47,16 +51,16 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  // Tudo são widgets no flutter, aqui começa o desenho do aplicação
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar( // Barra de cima
         title: Text(
           "Lista de Tarefas",
         ),
         backgroundColor: Colors.blueAccent,
         centerTitle: true,
       ),
-      body: Form(
+      body: Form( // corpo da aplicação
         key: _formKey,
         child: Column(
           children: <Widget>[
@@ -88,9 +92,9 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _refresh,
+            Expanded( // Isso foi usado pois eu tenho uma coluna e dentro dela tenho uma row
+              child: RefreshIndicator( // Então a row não sabera qual tamanho ela deve seguir
+                onRefresh: _refresh, // Função chamada sempre que for dado um refresh no aplicativo segurando para baixo
                 child: ListView.builder(
                   padding: EdgeInsets.only(top: 10.0),
                   itemBuilder: (context, index) {
@@ -107,7 +111,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<Null> _refresh() async {
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(seconds: 1)); // Usado para dar sort no aplicativo
     setState(() {
       _toDoList.sort((a, b) {
         if(a["ok"]  && !b["ok"])
@@ -122,18 +126,18 @@ class _HomeState extends State<Home> {
 
   }
 
-  Future<File> _getFile() async {
+  Future<File> _getFile() async { // Cria o arquivo json de forma asyncrona
     final directory = await getApplicationDocumentsDirectory();
     return File("${directory.path}/data.json");
   }
 
-  Future<File> _saveData() async {
+  Future<File> _saveData() async { // Salva os dados em um arquivo de forma asyncrona
     String data = json.encode(_toDoList);
     final file = await _getFile();
     return file.writeAsString(data);
   }
 
-  Future<String> _readData() async {
+  Future<String> _readData() async { // Le os dados do arquivo salvo no app de forma asyncrona
     try {
       final file = await _getFile();
       return file.readAsString();
@@ -142,7 +146,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Widget buildItem(context, index) {
+  Widget buildItem(context, index) { // Constroi um item de uma lista
     return Dismissible(
       key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
       background: Container(
@@ -177,11 +181,11 @@ class _HomeState extends State<Home> {
           _saveData();
         });
 
-        final snack = SnackBar(
+        final snack = SnackBar( // Barra usada para remover um elemento da lista
           content: Text(
             "Tarefa ${_lastRemoved["title"]} Removida!",
           ),
-          action: SnackBarAction(
+          action: SnackBarAction( // Ação da snack bar para desfazer a remoção
             label: "Desfazer",
             onPressed: () {
               setState(() {
